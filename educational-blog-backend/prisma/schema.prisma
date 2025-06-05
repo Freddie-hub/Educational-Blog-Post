@@ -6,10 +6,42 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Category {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  seoTitle        String?
+  metaKeywords    String?
+  metaDescription String?
+  topics          Topic[]
+  createdAt       DateTime @default(now())
+}
+
+model Topic {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  content         String
+  seoTitle        String?
+  metaKeywords    String?
+  metaDescription String?
+  categoryId      String
+  category        Category @relation(fields: [categoryId], references: [id])
+  createdAt       DateTime @default(now())
+}
+
+model AdSnippet {
+  id        String   @id @default(uuid())
+  page      String   @unique         // e.g., "global", "homepage", "blog-post"
+  position  String                   // e.g., "header", "sidebar", "inline"
+  content   String                   // Raw AdSense code
+  createdAt DateTime @default(now())
+}
+
